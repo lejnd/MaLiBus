@@ -1,5 +1,5 @@
 <template>
-<div class='user-transfer bg-f5'>
+<div class='amount-log bg-f5'>
     <topbar title="余额明细"></topbar>
     <div class="container">
         <div class="nothing" v-if="nothing">
@@ -22,7 +22,7 @@ import Topbar from '@/components/top-bar.vue';
 import common from '../components/common'
 
 export default {
-    name: 'UserTransfer',
+    name: 'AmountLog',
     components: { Topbar },
     data() {
         return {
@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang='less'>
-.user-transfer {
+.amount-log {
     .container {
         padding: 15px;
         .item {

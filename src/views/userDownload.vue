@@ -47,8 +47,8 @@ export default {
             androidcode: null,
             ioscode: null,
             isWx: false,
-            androidUrl: 'https://butest.mali126.com:8080/download/android/buiness-mali.apk',
-            iosUrl: 'https://www.iruffe.com/a245',
+            androidUrl: 'http://baourl.cn/MzYz',
+            iosUrl: 'http://baourl.cn/MzYz',
         };
     },
     methods: {

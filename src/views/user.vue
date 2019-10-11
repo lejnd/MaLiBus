@@ -61,6 +61,13 @@
             </h3>
             <van-icon name="arrow" />
         </div>
+        <router-link class="item" to="/course">
+            <h3>
+                <van-icon class="icon" size="2.1rem" name="question" />
+                使用教程
+            </h3>
+            <van-icon name="arrow" />
+        </router-link>
         <router-link v-for="(item, index) in settingList" :key="index" :to="item.to">
             <div class="item">
                 <h3>
@@ -152,7 +159,7 @@ export default {
         myWechat() {
             this.$dialog.alert({
                 title: '联系客服',
-                message: '微信号：qnzysdls',
+                message: '<br>客服一VX：qnzysdls<br><br>客服二VX：a15587021686<br>',
                 messageAlign: 'center',
             })
         }

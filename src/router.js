@@ -78,6 +78,11 @@ export default new Router({
             component: () => import(/* webpackChunkName: "UserData" */ './views/userData.vue')
         },
         {
+            path: '/course',
+            name: 'course',
+            component: () => import(/* webpackChunkName: "course" */ './views/course.vue')
+        },
+        {
             path: '/amountLogs',
             name: 'amountLogs',
             component: () => import(/* webpackChunkName: "amountLogs" */ './views/amountLogs.vue')

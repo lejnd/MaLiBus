@@ -13,14 +13,20 @@
                 <van-field v-model="accountMoney" type="number" placeholder="请输入要转移的金额">
                     <span slot="right-icon">元</span>
                 </van-field>
+                <van-field v-model="transferPassword" type="password" placeholder="请输入转移密码">
+                </van-field>
             </van-cell-group>
+            <div class="handler">
+                <van-icon name="lock" />
+                <span @click="gotoPassword">设置转移密码</span>
+            </div>
         </div>
         <p class="tip">
             <span class="title">提示：</span>
             可以把当前账号的金额转移到其他账户(仅限码力商家版内部用户，非支付宝和银行账户)，转移后金额不能撤销，请在转移前确认对方账号是否正确，码力平台不承担资金损失!
         </p>
         <div class="btn-group">
-            <van-button class="btn" type="info" @click="transferMoney">确定提交</van-button>
+            <van-button class="btn" type="info" @click="transferMoney" :loading="isLoading">确定提交</van-button>
         </div>
         <span class="detail" @click="gotoLogs">查看转移明细</span>
     </div>
@@ -38,6 +44,8 @@ export default {
         return {
             telTo: '',
             accountMoney: '',
+            transferPassword: '',
+            isLoading: false,
         };
     },
     computed: {
@@ -70,18 +78,30 @@ export default {
                 this.$notify('转移的金额不能大于账户余额')
                 return false
             }
+            if (!this.transferPassword) {
+                this.$notify('转移密码必填')
+                return false
+            }
+            this.isLoading = true;
             this.$fly.post('/api/CompanyOption/TransferMoney', {
                 telTo: this.telTo,
                 telFrom: localStorage.getItem('tel'),
                 accountMoney: this.accountMoney,
+                transferPassword: this.transferPassword,
             }).then((res) => {
+                this.isLoading = false;
                 let { returnCode, returnMsg } = res;
-                this.$toast(returnMsg);
+                this.$dialog.alert({
+                    message: returnMsg
+                });
                 this.getUserInfo();
             })
         },
         gotoLogs() {
             this.$router.push('/user/transferLogs');
+        },
+        gotoPassword() {
+            this.$router.push('/user/password?transfer=1');
         }
     },
     mounted() {
@@ -126,6 +146,16 @@ export default {
             .van-cell {
                 background-color: #ddd;
                 margin-bottom: 15px;
+            }
+            .handler {
+                padding-bottom: 10px;
+                color: #1989fa;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                span {
+                    padding: 5px;
+                }
             }
         }
         .tip {

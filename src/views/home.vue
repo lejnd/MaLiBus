@@ -114,7 +114,7 @@
         <div class="dialog-content">
             <p class="tip">
                 <span class="title">提示：</span>
-                输入价格最低6.5元，最高30元
+                输入价格最低6.6元，最高30元
             </p>
             <div class="form-wp">
                 <van-cell-group>
@@ -207,8 +207,8 @@ export default {
                 return false;
             }
             if (type != 2) {
-                if (this.price < 6.5) {
-                    this.$notify('输入金额不能小于6.5');
+                if (this.price < 6.6) {
+                    this.$notify('输入金额不能小于6.6');
                     return false;
                 }
                 if (this.price > 30) {

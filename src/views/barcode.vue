@@ -142,10 +142,29 @@ export default {
                     this.$notify(returnMsg);
                 }
             })
-        }
+        },
+        // testCreateTask(url) {
+        //     return this.$fly.post('/api/CompanyOption/CreateTaskByBusiness', common.connectObj({
+        //         appId: this.user.appid,
+        //         type: 1,
+        //         qrCodeInfo: 'http://weixin110.qq.com/wqw122',
+        //         expireTime: 300,
+        //         provCode: localStorage.getItem('region') || '0',
+        //         remark: this.$route.query.remark || '',
+        //     })).then((res) => {
+        //         let { returnCode, returnMsg, data } = res;
+        //         if (returnCode == 100) {
+        //             this.$toast(returnMsg);
+        //             this.getUserInfo();
+        //         } else {
+        //             this.$notify(returnMsg);
+        //         }
+        //     })
+        // }
     },
     mounted () {
-        this.start()
+        this.start();
+        // this.testCreateTask();
     }
 };
 </script>

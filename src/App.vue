@@ -20,10 +20,9 @@ export default {
             'getNotice',
         ]),
     },
-    created () {
-        this.getUserInfo()
-    },
     mounted () {
+        if (window.location.pathname == '/user/download') return false;
+        this.getUserInfo()
         // 公告alert
         this.getNotice().then((res) => {
             if (!res) return false;

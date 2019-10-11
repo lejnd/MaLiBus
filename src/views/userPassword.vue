@@ -3,6 +3,7 @@
     <topbar title="更改密码"></topbar>
     <div class="container">
         <div class="form-wp">
+            <div class="tip" v-if="isTransfer">设置转移密码</div>
             <van-cell-group>
                 <van-field v-model="password" type="password" placeholder="请输入新密码" />
             </van-cell-group>
@@ -16,7 +17,7 @@
                     type="tel"
                     placeholder="输入短信验证码"
                 />
-                <smscode-btn :btn-style="codeBtnStyle" :mobile="mobile"></smscode-btn>
+                <smscode-btn :btn-style="codeBtnStyle" apiurl="/api/User/ResetPasswordVerifyCode" :mobile="mobile"></smscode-btn>
             </van-cell-group>
         </div>
         <div class="btn-group">
@@ -67,6 +68,9 @@ export default {
         },
         mobile() {
             return this.user.tel ? this.user.tel.toString() : '';
+        },
+        isTransfer() {
+            return this.$route.query.transfer == 1;
         }
     },
     methods: {
@@ -83,17 +87,30 @@ export default {
                 this.$notify('请输入验证码')
                 return false
             }
-            this.$fly.post('/api/User/UpdatePassword', common.connectObj({
-                "userType": 1,
-                "verifyCode": this.verifyCode,
-                "password": this.password
-            })).then((res) => {
-                let { returnCode, returnMsg } = res;
-                this.$toast(returnMsg);
-                if (returnCode == 100) {
-                    this.$router.push('/user');
-                }
-            })
+            if (this.isTransfer) {
+                this.$fly.post('/api/User/SetTransferPassword', {
+                    "verifyCode": this.verifyCode,
+                    "transferPassword": this.password
+                }).then((res) => {
+                    let { returnCode, returnMsg } = res;
+                    this.$toast(returnMsg);
+                    if (returnCode == 100) {
+                        this.$router.replace('/user/transfer');
+                    }
+                })
+            } else {
+                this.$fly.post('/api/User/UpdatePassword', common.connectObj({
+                    "userType": 1,
+                    "verifyCode": this.verifyCode,
+                    "password": this.password
+                })).then((res) => {
+                    let { returnCode, returnMsg } = res;
+                    this.$toast(returnMsg);
+                    if (returnCode == 100) {
+                        this.$router.replace('/user');
+                    }
+                })
+            }
         }
     },
     mounted() {
