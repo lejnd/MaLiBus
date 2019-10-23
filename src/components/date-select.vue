@@ -43,6 +43,10 @@ export default {
             this.dateShow = true;
         },
         confirm() {
+            if (this.currentDate > new Date()) {
+                this.$notify('日期不能大于今天');
+                return false;
+            }
             this.dateShow = false;
             this.$emit('getDate', this.formDate);
         },

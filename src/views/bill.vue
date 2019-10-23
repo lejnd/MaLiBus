@@ -32,14 +32,15 @@ const mockData = [{
     create_time: '2019/09/19 13:41:00',
     price: 7.8,
     task_status_des: '接单中',
-    task_status: 1,
+    status: 1,
 }, {
     task_id: 33333,
     tel: 15894586066,
     create_time: '2019/09/19 13:41:40',
     price: 7.8,
     task_status_des: '接单中',
-    task_status: 1,
+    status: 8,
+    upload_img: ''
 }]
 
 export default {

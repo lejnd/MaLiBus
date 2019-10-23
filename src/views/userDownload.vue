@@ -47,8 +47,8 @@ export default {
             androidcode: null,
             ioscode: null,
             isWx: false,
-            androidUrl: 'http://baourl.cn/MzYz',
-            iosUrl: 'http://baourl.cn/MzYz',
+            androidUrl: 'http://huggiesbb.com/a363',
+            iosUrl: 'http://huggiesbb.com/a363',
         };
     },
     methods: {

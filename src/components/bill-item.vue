@@ -19,15 +19,14 @@
         <!-- <van-button type="info" size="small" :disabled="disable" @click="setTaskStatus(2)">辅助失败</van-button> -->
         <van-button v-if="item.status == 2" type="info" size="small" @click="failHandler">辅助失败</van-button>
         <van-button v-if="item.status == 2" type="primary" size="small" @click="setTaskStatus(1)">辅助成功</van-button>
-        <van-button v-if="item.status >= 8" type="info" size="small" @click="uploadDialog=true">传未过图</van-button>
+        <van-button v-if="item.status >= 8 || item.status == 6" type="info" size="small" @click="uploadDialog=true" :disabled="item.upload_img?true:false">{{item.upload_img ? '已上传图片' : '传未过图'}}</van-button>
         <van-button v-if="item.status != 0 && item.status != 2" size="small" @click="remarkDialog=true">添加备注</van-button>
     </div>
     <van-dialog
         v-model="uploadDialog"
         title="传未过图"
         show-cancel-button
-        confirm-button-text="提交"
-        :before-close="beforeCloseUpload"
+        :show-confirm-button="false"
     >
         <div class="dialog-content">
             <!-- <p class="tip">
@@ -36,12 +35,14 @@
             </p> -->
             <div class="form-wp">
                 <div class="center">
-                    <van-uploader
-                        v-model="fileList"
-                        :after-read="afterRead"
-                        :max-count="1"
-                        @delete="imgUrl=''"
-                    />
+                    <van-uploader :after-read="afterRead" :max-count="1" @delete="imgUrl=''">
+                        <van-image width="100" height="100" :src="imgUrl">
+                            <template v-if="isUploading" v-slot:error>
+                                <van-loading type="spinner" size="20" />
+                            </template>
+                            <template v-else v-slot:error>点击上传</template>
+                        </van-image>
+                    </van-uploader>
                 </div>
             </div>
         </div>
@@ -88,6 +89,7 @@ export default {
             imgUrl: '',
             remarkDialog: false,
             remark: '',
+            isUploading: false,
         };
     },
     methods: {
@@ -182,46 +184,53 @@ export default {
         },
         // 传未过图
         afterRead(file) {
-            console.log(file);
+            this.imgUrl = '';
+            this.isUploading = true;
             this.$fly.post('/api/File/UploadFile', common.obj2formdata({
-                files: file.file
+                files: file.file,
+                taskId: this.item.task_id,
             })).then((res) => {
                 let { returnCode, returnMsg, data } = res;
                 if (returnCode == 100) {
-                    this.$toast(returnMsg);  
+                    this.$notify({
+                        background: '#07c160',
+                        message: returnMsg
+                    }); 
                     this.imgUrl = data;
-                    console.log(this.fileList);
+                    this.isUploading = false;
+                    this.uploadDialog = false;
+                    this.$emit('replay')
                 } else {
                     this.$notify(returnMsg);                    
                 }
             })
         },
-        beforeCloseUpload(action, done) {
-            if (action === 'confirm') {
-                if (!this.imgUrl) {
-                    this.$notify('请先上传图片');
-                    done(false);
-                    return false;
-                }
-                this.$fly.post('/api/CompanyOption/HandSetTask', {
-                    taskId: this.item.task_id,
-                    type: 1,
-                    upload_img: this.imgUrl
-                }).then((res) => {
-                    let { returnCode, returnMsg, data } = res;
-                    if (returnCode == 100) {
-                        this.$toast(returnMsg);  
-                        this.imgUrl = '';
-                        done();
-                    } else {
-                        this.$notify(returnMsg); 
-                        done(false);
-                    }
-                })
-            } else {
-                done();
-            }
-        },
+        // beforeCloseUpload(action, done) {
+        //     if (action === 'confirm') {
+        //         if (!this.imgUrl) {
+        //             this.$notify('请先上传图片');
+        //             done(false);
+        //             return false;
+        //         }
+        //         this.$fly.post('/api/CompanyOption/HandSetTask', {
+        //             taskId: this.item.task_id,
+        //             type: 1,
+        //             upload_img: this.imgUrl
+        //         }).then((res) => {
+        //             let { returnCode, returnMsg, data } = res;
+        //             if (returnCode == 100) {
+        //                 this.$toast(returnMsg);  
+        //                 this.imgUrl = '';
+        //                 done();
+        //             } else {
+        //                 this.$notify(returnMsg); 
+        //                 done(false);
+        //             }
+        //         })
+        //     } else {
+        //         done();
+        //     }
+        // },
         beforeCloseRemark(action, done) {
             if (action === 'confirm') {
                 if (!this.remark) {

@@ -91,6 +91,11 @@ export default new Router({
             path: '/rechargeLogs',
             name: 'rechargeLogs',
             component: () => import(/* webpackChunkName: "rechargeLogs" */ './views/rechargeLogs.vue')
+        },
+        {
+            path: '/mobileOrder',
+            name: 'mobileOrder',
+            component: () => import(/* webpackChunkName: "mobileOrder" */ './views/mobileOrder.vue')
         }
     ]
 })
