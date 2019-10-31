@@ -96,6 +96,11 @@ export default new Router({
             path: '/mobileOrder',
             name: 'mobileOrder',
             component: () => import(/* webpackChunkName: "mobileOrder" */ './views/mobileOrder.vue')
+        },
+        {
+            path: '/settingProvince',
+            name: 'settingProvince',
+            component: () => import(/* webpackChunkName: "settingProvince" */ './views/settingProvince.vue')
         }
     ]
 })

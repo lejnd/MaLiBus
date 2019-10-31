@@ -17,24 +17,28 @@
                         <span class="title">总下单</span>
                     </van-grid-item>
                     <van-grid-item>
-                        <span class="value">{{dataInfo.successCount}}</span>
+                        <span class="value">{{dataInfo.success_count}}</span>
                         <span class="title">日成功</span>
                     </van-grid-item>
                     <van-grid-item>
-                        <span class="value">{{dataInfo.successRate}}%</span>
-                        <span class="title">总成功率</span>
+                        <span class="value">{{dataInfo.success_rate}}%</span>
+                        <span class="title">日成功率</span>
                     </van-grid-item>
                     <van-grid-item to="/userRecharge">
-                        <span class="value">{{dataInfo.failCount}}</span>
+                        <span class="value">{{dataInfo.wj_order}}</span>
                         <span class="title">日未接</span>
                     </van-grid-item>
                     <van-grid-item>
-                        <span class="value">{{dataInfo.failRate}}%</span>
+                        <span class="value">{{dataInfo.wj_order_rate}}%</span>
                         <span class="title">日未接率</span>
                     </van-grid-item>
                     <van-grid-item>
-                        <span class="value">{{dataInfo.successRate}}%</span>
-                        <span class="title">实际成功率</span>
+                        <span class="value">{{dataInfo.fail_count}}%</span>
+                        <span class="title">日失败</span>
+                    </van-grid-item>
+                    <van-grid-item>
+                        <span class="value">{{dataInfo.fail_rate}}%</span>
+                        <span class="title">日失败率</span>
                     </van-grid-item>
                 </van-grid>
             </div>
@@ -83,7 +87,7 @@ export default {
         },
         getInfo() {
             this.$fly.get('/api/CompanyOption/GetTaskListByTelAndDate', {
-                appId: localStorage.getItem('appid'),
+                // appId: localStorage.getItem('appid'),
                 date: this.formDate
             }).then((res) => {
                 let { returnCode, returnMsg, data } = res;

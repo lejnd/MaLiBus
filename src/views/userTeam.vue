@@ -1,6 +1,7 @@
 <template>
 <div class='user-team bg-f5'>
     <topbar title="下级列表"></topbar>
+    <date-select @getDate="getDate"></date-select>
     <p class="total">直接下级总数：{{children.length}}</p>
     <div class="container">
         <div class="item" v-for="item in children" :key="item.tel">
@@ -53,18 +54,25 @@
 
 <script>
 import Topbar from '@/components/top-bar.vue';
-import common from '../components/common'
+import common from '../components/common';
+import DateSelect from '@/components/date-select.vue';
+
 export default {
     name: 'UserTeam',
-    components: { Topbar },
+    components: { Topbar, DateSelect },
     data() {
         return {
             children: [],
+            searchDate: '',
         };
     },
     methods: {
+        getDate(date) {
+            this.searchDate = date;
+            this.getList();            
+        },
         getList() {
-            this.$fly.get('/api/CompanyOption/GetTreeCardInfo', common.connectObj())
+            this.$fly.get('/api/CompanyOption/GetTreeCardInfo', { dateTime: this.searchDate })
             .then((res) => {
                 let { returnCode, returnMsg, data } = res;
                 if (returnCode == 100 && data) {
@@ -82,7 +90,7 @@ export default {
         }
     },
     mounted() {
-        this.getList();
+
     },
 }
 </script>

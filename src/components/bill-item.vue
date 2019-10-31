@@ -10,15 +10,15 @@
     </p>
     <div class="flex-box">
         <div class="info">
-            单价：<span class="value">¥{{item.price}}</span> （{{item.province_name}}）
+            单价：<span class="value">¥{{item.real_money}}</span> （{{item.province_name}}）
         </div>
         <span class="status">{{item.task_status_des}}</span>
     </div>
     <div class="remark">备注：<span>{{item.remark || '无备注'}}</span></div>
     <div class="btn-group">
         <!-- <van-button type="info" size="small" :disabled="disable" @click="setTaskStatus(2)">辅助失败</van-button> -->
-        <van-button v-if="item.status == 2" type="info" size="small" @click="failHandler">辅助失败</van-button>
-        <van-button v-if="item.status == 2" type="primary" size="small" @click="setTaskStatus(1)">辅助成功</van-button>
+        <van-button v-if="item.status == 2 && !item.is_mobile_assist" type="info" size="small" @click="failHandler">辅助失败</van-button>
+        <van-button v-if="item.status == 2 && !item.is_mobile_assist" type="primary" size="small" @click="setTaskStatus(1)">辅助成功</van-button>
         <van-button v-if="item.status >= 8 || item.status == 6" type="info" size="small" @click="uploadDialog=true" :disabled="item.upload_img?true:false">{{item.upload_img ? '已上传图片' : '传未过图'}}</van-button>
         <van-button v-if="item.status != 0 && item.status != 2" size="small" @click="remarkDialog=true">添加备注</van-button>
     </div>
@@ -110,7 +110,7 @@ export default {
                 let cTime = new Date(this.item.create_time).getTime();
                 let timing = 15 * 60 * 1000; // 15分钟定时
                 let result = timing - (nTime - cTime);   // 15分钟 - (当前时间 - 创建时间)
-                console.log(this.item.task_id, result);
+                // console.log(this.item.task_id, result);
                 this.overtime = this.formatSeconds(result);
                 if (result <= 0) {
                     this.overtime = '超时'

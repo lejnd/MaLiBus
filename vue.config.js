@@ -11,8 +11,8 @@ module.exports = {
         proxy: {
             '/api': {
                 ws: false,
-                target: 'https://business.mali126.com:448', 
-                // target: 'http://test.company.mali666.com:9006',
+                // target: 'https://business.mali126.com:448', 
+                target: 'http://test.company.mali666.com:9006',
                 changOrigin: true,
                 // pathRewrite: {
                 //     '^/api': ''

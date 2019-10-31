@@ -1,6 +1,7 @@
 <template>
 <div class='amount-log bg-f5'>
     <topbar title="余额明细"></topbar>
+    <date-select @getDate="getDate"></date-select>
     <div class="container">
         <div class="nothing" v-if="nothing">
             <img src="../assets/img/nothing.png" alt="">
@@ -20,21 +21,27 @@
 <script>
 import Topbar from '@/components/top-bar.vue';
 import common from '../components/common'
+import DateSelect from '@/components/date-select.vue';
 
 export default {
     name: 'AmountLog',
-    components: { Topbar },
+    components: { Topbar, DateSelect },
     data() {
         return {
             items: [],
             nothing: false,
+            searchDate: '',
         };
     },
     computed: {
     },
     methods: {
+        getDate(date) {
+            this.searchDate = date;
+            this.getLogs();            
+        },
         getLogs() {
-            this.$fly.post('/api/CompanyOption/GetBalanceLogList')
+            this.$fly.post(`/api/CompanyOption/GetBalanceLogList?dateTime=${this.searchDate}`)
             .then((res) => {
                 let { returnCode, returnMsg, data } = res;
                 if (returnCode == 100) {
@@ -50,7 +57,7 @@ export default {
         }
     },
     mounted() {
-        this.getLogs();
+        // this.getLogs();
     },
 }
 </script>

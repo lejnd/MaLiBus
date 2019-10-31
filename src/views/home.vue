@@ -22,12 +22,20 @@
             </div>
         </div>
         <div class="region-wp">
+            <!-- <div class="region-row">
+                <h3>api脚本发布</h3>
+                <van-dropdown-menu class="flex1">
+                    <van-dropdown-item v-model="region" :options="regionOpt" @change="regionChange" />
+                </van-dropdown-menu>
+            </div> -->
             <div class="region-row">
-                <h3>归属地</h3>
+                <h3>手动扫码省份</h3>
                 <van-dropdown-menu class="flex1">
                     <van-dropdown-item v-model="region" :options="regionOpt" @change="regionChange" />
                 </van-dropdown-menu>
             </div>
+            <van-cell title="api脚本发布省份" :value="user.api_provcode_desc" is-link to="/settingProvince?type=1" />
+            <!-- <van-cell title="手机号辅助省份" value="云南" is-link /> -->
             <van-cell-group>
                 <van-field
                     v-model="remark"
@@ -52,7 +60,7 @@
                     <img class="icon" src="../assets/img/quick-order.png" />
                     <span class="name">快速接单</span>
                 </van-grid-item>
-                <van-grid-item @click="isDev">
+                <van-grid-item to="/mobileOrder">
                     <img class="icon" src="../assets/img/tel-upload.jpg" />
                     <span class="name">手机号上传</span>
                 </van-grid-item>
@@ -335,8 +343,10 @@ export default {
             .region-row {
                 padding: 0 15px;
                 display: flex;
+                justify-content: space-between;
                 align-items: center;
                 font-size: 14/11rem;
+                border-bottom: 1px solid #f5f5f5;
                 .flex1 {
                     flex: 1;
                     .van-dropdown-menu__title {
