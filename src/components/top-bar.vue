@@ -4,7 +4,11 @@
         :title="title"
         left-arrow
         @click-left="onClickLeft"
-    />
+    >
+        <div slot="right">
+            <slot name="right"></slot>
+        </div>
+    </van-nav-bar>
 </div>
 </template>
 

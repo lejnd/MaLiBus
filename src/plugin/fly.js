@@ -20,7 +20,7 @@ fly.interceptors.request.use((request)=>{
     request.headers['X-Tag']="flyio";
     request.headers['Authorization'] = localStorage.getItem('Authorization') || '';
     request.headers['Content-Type'] = 'application/json';
-    request.timeout = 8000;
+    request.timeout = 20000;
     request.withCredentials = true;
     // return request;
 })

@@ -15,6 +15,13 @@
             <p class="deco">{{item.business_type_desc}}</p>
         </div>
     </div>
+    <van-pagination
+        v-if="totalNum > PAGE_SIZE"
+        v-model="currentPage" 
+        :page-count="pageCount"
+        @change="getLogs"
+        mode="simple"
+    />
 </div>
 </template>
 
@@ -22,6 +29,8 @@
 import Topbar from '@/components/top-bar.vue';
 import common from '../components/common'
 import DateSelect from '@/components/date-select.vue';
+
+const PAGE_SIZE = 10;
 
 export default {
     name: 'AmountLog',
@@ -31,9 +40,15 @@ export default {
             items: [],
             nothing: false,
             searchDate: '',
+            currentPage: 1,
+            PAGE_SIZE,
+            totalNum: null,
         };
     },
     computed: {
+        pageCount() {
+            return Math.ceil(this.totalNum / PAGE_SIZE);
+        }
     },
     methods: {
         getDate(date) {
@@ -41,14 +56,15 @@ export default {
             this.getLogs();            
         },
         getLogs() {
-            this.$fly.post(`/api/CompanyOption/GetBalanceLogList?dateTime=${this.searchDate}`)
+            this.$fly.post(`/api/CompanyOption/GetBalanceLogListPage?dateTime=${this.searchDate}&pageIndex=${this.currentPage}&pageSize=${PAGE_SIZE}`)
             .then((res) => {
                 let { returnCode, returnMsg, data } = res;
                 if (returnCode == 100) {
-                    let list = data || [];
+                    let list = data.items || [];
+                    this.totalNum = data.totalNum || 0;
                     this.items = list.map(item => Object.assign({}, item, {
                         create_time: common.formatTime(item.create_time)
-                    }))
+                    }));
                     this.nothing = this.items.length == 0
                 } else {
                     this.$toast(returnMsg);

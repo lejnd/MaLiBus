@@ -53,45 +53,57 @@ export default {
             }
         },
         processAssist() {
-            this.processAssistLoading = true;
-            this.$fly.post(`/api/TelAssist/ProcessAssist?taskId=${this.item.task_id}`)
-            .then((res) => {
-                this.processAssistLoading = false;
-                let { returnCode, returnMsg, data } = res;
-                if (returnCode == 100) {
-                    this.$toast(returnMsg)
-                    this.$emit('replay')                   
-                } else {
-                    this.$notify(returnMsg)
-                }
+            // this.processAssistLoading = true;
+            this.$dialog.alert({
+                message: '确定执行辅助吗？'
+            }).then(() => {
+                this.$fly.post(`/api/TelAssist/ProcessAssist?taskId=${this.item.task_id}`)
+                .then((res) => {
+                    // this.processAssistLoading = false;
+                    let { returnCode, returnMsg, data } = res;
+                    if (returnCode == 100) {
+                        this.$toast(returnMsg)
+                        this.$emit('replay')                   
+                    } else {
+                        this.$notify(returnMsg)
+                    }
+                })
             })
         },
         setTaskDeleted() {
-            this.setTaskDeletedLoading = true;
-            this.$fly.get(`/api/TelAssist/SetTaskDeleted?taskId=${this.item.task_id}`)
-            .then((res) => {
-                this.setTaskDeletedLoading = false;
-                let { returnCode, returnMsg, data } = res;
-                if (returnCode == 100) {
-                    this.$toast(returnMsg)
-                    this.$emit('replay')                   
-                } else {
-                    this.$notify(returnMsg)
-                }
+            // this.setTaskDeletedLoading = true;
+            this.$dialog.alert({
+                message: '确定删除数据吗？'
+            }).then(() => {
+                this.$fly.get(`/api/TelAssist/SetTaskDeleted?taskId=${this.item.task_id}`)
+                .then((res) => {
+                    // this.setTaskDeletedLoading = false;
+                    let { returnCode, returnMsg, data } = res;
+                    if (returnCode == 100) {
+                        this.$toast(returnMsg)
+                        this.$emit('replay')                   
+                    } else {
+                        this.$notify(returnMsg)
+                    }
+                })
             })
         },
         setTaskRegisted() {
-            this.setTaskRegistedLoading = true;
-            this.$fly.get(`/api/TelAssist/SetTaskRegisted?taskId=${this.item.task_id}`)
-            .then((res) => {
-                this.setTaskRegistedLoading = false;
-                let { returnCode, returnMsg, data } = res;
-                if (returnCode == 100) {
-                    this.$toast(returnMsg)
-                    this.$emit('replay')
-                } else {
-                    this.$notify(returnMsg)
-                }
+            // this.setTaskRegistedLoading = true;
+            this.$dialog.alert({
+                message: '确定注册吗？'
+            }).then(() => {
+                this.$fly.get(`/api/TelAssist/SetTaskRegisted?taskId=${this.item.task_id}`)
+                .then((res) => {
+                    // this.setTaskRegistedLoading = false;
+                    let { returnCode, returnMsg, data } = res;
+                    if (returnCode == 100) {
+                        this.$toast(returnMsg)
+                        this.$emit('replay')
+                    } else {
+                        this.$notify(returnMsg)
+                    }
+                })
             })
         }
     },

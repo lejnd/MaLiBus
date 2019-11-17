@@ -1,6 +1,17 @@
 <template>
 <div class='mobile-order bg-f5'>
-    <topbar title="手机号下单"></topbar>
+    <topbar title="手机号下单">
+        <van-button
+            class="top-btn"
+            round plain
+            slot="right"
+            @click="replayHandler"
+            type="info" size="mini"
+            style="margin-left:5px;"
+            :loading="isReplayLoading"
+            icon="replay"
+        >刷新</van-button>
+    </topbar>
     <div class="header">
         <van-search
             v-model="mobile"
@@ -10,7 +21,7 @@
             left-icon="graphic"
         >
             <van-button class="btn" round slot="action" @click="addMobile" type="info" size="mini" :loading="isAddLoading">添加</van-button>
-            <van-button class="btn" round plain slot="action" @click="replayHandler" type="info" size="mini" style="margin-left:5px;" :loading="isReplayLoading">刷新</van-button>
+            <van-button class="btn" round plain slot="action" @click="batchDialog=true" type="primary" size="mini">批量</van-button>
         </van-search>
         <van-cell title="手机号辅助省份" :value="user.tel_provcode_desc" is-link to="/settingProvince?type=2" />
         <div class="tip">
@@ -30,6 +41,21 @@
             ></mobile-item>
         </div>
     </div>
+    <van-dialog
+        v-model="batchDialog"
+        title="批量添加手机号"
+        show-cancel-button
+        confirm-button-text="批量添加"
+        :before-close="beforeCloseAdd"
+    >
+        <div class="dialog-content">
+            <p class="tip">注意：多个手机号使用逗号分隔，只能输入数字和逗号</p>
+            <van-cell-group>
+                <van-field class="input-bg" v-model="batchMobile" type="textarea" rows="4" clearable autosize placeholder="请输入手机号，使用逗号分隔" />
+            </van-cell-group>
+            <p class="error" v-html="errMsg"></p>
+        </div>
+    </van-dialog>
 </div>
 </template>
 
@@ -61,6 +87,9 @@ export default {
             nothing: false,
             isAddLoading: false,
             isReplayLoading: false,
+            batchDialog: false,
+            batchMobile: '',
+            errMsg: '',
         };
     },
     computed: {
@@ -126,6 +155,51 @@ export default {
                     this.$notify(returnMsg)
                 }
             })
+        },
+        formatMobiles(str) {
+            let strA = str.replace(/[^0-9,，]*/g,"");     // format as ',,1322333,23213312313，123233，23123233，2313,123'
+            let strB = strA.replace(/，/g,",");     // format as '1322333,23213312313,123233,23123233,2313,123'
+            let arr = strB.split(',');
+            console.log('arr1：', arr);
+            arr = arr.filter(d => d);
+            console.log('arr2：', arr);
+            arr = Array.from(new Set(arr));
+            console.log('arr3：', arr);
+            return arr
+        },
+        validateMobiles(arr) {
+            return arr.filter(val => !common.isVerificationNumber(val));
+        },
+        beforeCloseAdd(action, done) {
+            this.errMsg = '';
+            if (action === 'confirm') {
+                if (!this.batchMobile) {
+                    this.$notify('请输入手机号');
+                    done(false);
+                    return false;
+                }
+                let mobileArr = this.formatMobiles(this.batchMobile);
+                if (this.validateMobiles(mobileArr).length > 0) {
+                    this.errMsg = '错误手机号：' + this.validateMobiles(mobileArr).join('，') + '<br>错误原因：1、手机号格式错误；2、未使用逗号分割';
+                    done(false);
+                    return false;
+                }
+                this.$fly.post(`/api/TelAssist/CreateBatchOrder`, {
+                    phones: mobileArr
+                }).then((res) => {
+                    let { returnCode, returnMsg, data } = res;
+                    if (returnCode == 100) {
+                        this.$toast(returnMsg)
+                        this.getList()
+                        done();
+                    } else {
+                        this.$notify(returnMsg)
+                        done(false);
+                    }
+                })
+            } else {
+                done();
+            }
         }
     },
     mounted() {
@@ -142,6 +216,18 @@ export default {
 
 <style lang='less'>
 .mobile-order {
+    .top-bar .van-nav-bar .van-icon {
+        vertical-align: unset;
+        padding: 0;
+    }
+    .top-btn {
+        height: 32px;
+        line-height: 28px;
+        border: 0;
+        font-size: 13/11rem;
+        // display: flex;
+        // align-items: center;
+    }
     .header {
         .btn {
             height: 32px;
@@ -169,6 +255,24 @@ export default {
                 font-size: 14/11rem;
                 color: #999;
             }
+        }
+    }
+    .van-dialog {
+        max-width: 600px;
+    }
+    .dialog-content {
+        padding: 15px 0;
+        .tip {
+            padding: 10px 15px;
+        }
+        .input-bg {
+            background-color: #f5f5f5;
+        }
+        .error {
+            color: #f00;
+            padding: 10px 15px;
+            font-size: 12/11rem;
+            word-break: break-all;
         }
     }
 }

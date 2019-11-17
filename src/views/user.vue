@@ -159,7 +159,7 @@ export default {
         myWechat() {
             this.$dialog.alert({
                 title: '联系客服',
-                message: '<br>客服一VX：qnzysdls<br><br>客服二VX：a15587021686<br>',
+                message: '<br>客服一VX：maliysw<br><br>客服二VX：a15587021686<br>',
                 messageAlign: 'center',
             })
         }

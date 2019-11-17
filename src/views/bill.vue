@@ -15,6 +15,13 @@
         </div>
         <bill-item v-for="item in items" :key="item.id" :item="item" @replay="getTaskCenter"></bill-item>
     </div>
+    <van-pagination
+        v-if="totalNum > PAGE_SIZE"
+        v-model="currentPage" 
+        :page-count="pageCount"
+        @change="getTaskCenter"
+        mode="simple"
+    />
     <tab-bar :active="1"></tab-bar>
 </div>
 </template>
@@ -25,6 +32,8 @@ import TabBar from '@/components/tab-bar.vue';
 import common from '../components/common';
 import DateSelect from '@/components/date-select.vue';
 import BillItem from '@/components/bill-item.vue';
+
+const PAGE_SIZE = 10;
 
 const mockData = [{
     task_id: 22222,
@@ -52,7 +61,15 @@ export default {
             items: [],
             nothing: false,
             tip: '',
+            currentPage: 1,
+            PAGE_SIZE,
+            totalNum: null,
         };
+    },
+    computed: {
+        pageCount() {
+            return Math.ceil(this.totalNum / PAGE_SIZE);
+        }
     },
     methods: {
         getDate(date) {
@@ -64,15 +81,18 @@ export default {
                 duration: 0,       // 持续展示 toast
                 forbidClick: true, // 禁用背景点击
             });
-            this.$fly.get('/api/CompanyOption/GetTaskCenter', {
+            this.$fly.get('/api/CompanyOption/GetTaskCenterPage', {
                 dateTime: this.formDate,
-                appid: localStorage.getItem('appid'),
+                pageIndex: this.currentPage,
+                pageSize: PAGE_SIZE,
+                // appid: localStorage.getItem('appid'),
                 // appid: '1164431027884658688',
             }).then((res) => {
                 toast.clear();
                 let { returnCode, returnMsg, data } = res;
                 if (returnCode == 100) {
-                    let list = data || [];
+                    let list = data.items || [];
+                    this.totalNum = data.totalNum || 0;
                     this.items = list.map(item => Object.assign({}, item, {
                         create_time: common.formatTime(item.create_time)
                     }));
