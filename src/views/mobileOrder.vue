@@ -13,6 +13,12 @@
         >刷新</van-button>
     </topbar>
     <div class="header">
+        <div class="region-row">
+            <h3>选择区号：</h3>
+            <van-dropdown-menu class="flex1">
+                <van-dropdown-item v-model="areaText" :options="areaOpt" @change="changeArea"/>
+            </van-dropdown-menu>
+        </div>
         <van-search
             v-model="mobile"
             placeholder="输入要辅助的手机号"
@@ -61,7 +67,8 @@
 
 <script>
 import Topbar from '@/components/top-bar.vue';
-import common from '@/components/common'
+import common from '@/components/common';
+import config from '@/config'
 import MobileItem from '@/components/mobile-item';
 import { mapGetters, mapActions } from 'vuex';
 import { setTimeout } from 'timers';
@@ -90,6 +97,9 @@ export default {
             batchDialog: false,
             batchMobile: '',
             errMsg: '',
+
+            areaOpt: config.areaCode,
+            areaText: '中国大陆',
         };
     },
     computed: {
@@ -98,6 +108,9 @@ export default {
         ]),
         user() {
             return this.userInfo || {};
+        },
+        area() {
+            return this.areaOpt.find(item => item.value == this.areaText).code;
         }
     },
     methods: {
@@ -139,12 +152,12 @@ export default {
                 this.$notify('请输入手机号码')
                 return false
             }
-            if (!common.isVerificationNumber(this.mobile)) {
-                this.$notify('手机号码格式不正确')
+            if (!common.isNumber(this.mobile)) {
+                this.$notify('手机号只能为数字')
                 return false
             }
             this.isAddLoading = true;
-            this.$fly.post(`/api/TelAssist/CreatePhoneOrder?phone=${this.mobile}`)
+            this.$fly.post(`/api/TelAssist/CreatePhoneOrder?phone=${this.mobile}&area=${this.area}`)
             .then((res) => {
                 this.isAddLoading = false;
                 let { returnCode, returnMsg, data } = res;
@@ -168,7 +181,7 @@ export default {
             return arr
         },
         validateMobiles(arr) {
-            return arr.filter(val => !common.isVerificationNumber(val));
+            return arr.filter(val => !common.isNumber(val));
         },
         beforeCloseAdd(action, done) {
             this.errMsg = '';
@@ -180,11 +193,12 @@ export default {
                 }
                 let mobileArr = this.formatMobiles(this.batchMobile);
                 if (this.validateMobiles(mobileArr).length > 0) {
-                    this.errMsg = '错误手机号：' + this.validateMobiles(mobileArr).join('，') + '<br>错误原因：1、手机号格式错误；2、未使用逗号分割';
+                    this.errMsg = '错误手机号：' + this.validateMobiles(mobileArr).join('，') + '<br>错误原因：1、手机号只能为数字；2、未使用逗号分割';
                     done(false);
                     return false;
                 }
                 this.$fly.post(`/api/TelAssist/CreateBatchOrder`, {
+                    area: this.area,
                     phones: mobileArr
                 }).then((res) => {
                     let { returnCode, returnMsg, data } = res;
@@ -200,9 +214,13 @@ export default {
             } else {
                 done();
             }
+        },
+        changeArea() {
+            localStorage.setItem('areaText', this.areaText);
         }
     },
     mounted() {
+        this.areaText = localStorage.getItem('areaText') || '中国大陆';
         this.getUserInfo().then(() => {
             if (this.user.tel_provcode == -1) {
                 this.$toast('请先设置手机号辅助省份')
@@ -232,6 +250,30 @@ export default {
         .btn {
             height: 32px;
             line-height: 28px;
+        }
+        .region-row {
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14/11rem;
+            border-bottom: 1px solid #f5f5f5;
+            background-color: #fff;
+            .flex1 {
+                flex: 1;
+                .van-dropdown-menu__title {
+                    width: 90%;
+                    text-align: center;
+                }
+            }
+            .radio-wp {
+                flex: 1;
+                display: flex;
+                height: 60px;
+                .van-radio {
+                    margin-left: 15/11rem;
+                }
+            }
         }
     }
     .tip {

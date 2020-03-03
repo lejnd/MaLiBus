@@ -54,7 +54,7 @@
     </div>
     <div class="setting-list">
         <!-- 只有1级商家显示联系客服：user.parent_id=='0' -->
-        <div class="item" @click="myWechat" v-if="user.parent_id=='0'">
+        <div class="item" @click="myWechat">
             <h3>
                 <van-icon class="icon" size="2.1rem" name="wechat" />
                 联系客服
@@ -159,7 +159,7 @@ export default {
         myWechat() {
             this.$dialog.alert({
                 title: '联系客服',
-                message: '<br>客服一VX：maliysw<br><br>客服二VX：a15587021686<br>',
+                message: '<br>客服一VX：15587007003<br><br>客服二VX：13388806104<br>客服三VX：yunxiazyh<br>',
                 messageAlign: 'center',
             })
         }

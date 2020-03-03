@@ -1,6 +1,6 @@
 <template>
 <div class='home'>
-    <home-top title="码力" handler-name="公告" @onClickRight="onClickRight">
+    <home-top title="雷霆" handler-name="公告" @onClickRight="onClickRight">
         <van-icon name="volume" />
     </home-top>
     <div class="container">
@@ -34,7 +34,7 @@
                     <van-dropdown-item v-model="region" :options="regionOpt" @change="regionChange" />
                 </van-dropdown-menu>
             </div>
-            <van-cell title="api脚本发布省份" :value="user.api_provcode_desc" is-link to="/settingProvince?type=1" />
+            <van-cell title="省份设置" is-link to="/settingProvince" />
             <!-- <van-cell title="手机号辅助省份" value="云南" is-link /> -->
             <van-cell-group>
                 <van-field
@@ -65,6 +65,27 @@
                     <span class="name">手机号上传</span>
                 </van-grid-item>
             </van-grid>
+        </div>
+        <div class="handler-group">
+            <div class="content">
+                <h1 class="title">发布价格实时指导</h1>
+                <p class="price">快速接单价格: <span>￥{{taskAvgPrice}}</span></p>
+                <van-button class="btn" size="small" plain round type="warning" :loading="isGetTaskAvgPrice" @click="getTaskAvgPrice">刷新</van-button>
+            </div>
+        </div>
+        <div class="handler-group">
+            <div class="content">
+                <h1 class="title">实时订单排队情况</h1>
+                <p>(排队多表示当前订单挤压严重，可酌情调高自己发布价)</p>
+                <div class="data-wp">
+                    <span class="data">{{wjdTotal}}</span>
+                    <span>平台待接单</span>
+                </div>
+                <van-button class="btn" size="small" plain round type="warning" :loading="isGetTaskPendingCount" @click="getTaskPendingCount">刷新</van-button>
+                <p class="row">总的已接单在辅助，省份分布：{{yjdList}}</p>
+                <p class="row">总的未接单，省份分布：{{wjdList}}</p>
+                <p class="row">兼职分布：{{userList}}</p>
+            </div>
         </div>
         <div class="panel">
             <p><strong>公告：</strong>{{notice || '暂无公告'}}</p>
@@ -158,6 +179,14 @@ export default {
             dialogShow: false,
             settingDialog: false,
             dialogText: '',
+
+            taskAvgPrice: '',
+            isGetTaskAvgPrice: false,
+            isGetTaskPendingCount: false,
+            wjdTotal: '',
+            wjdList: '',
+            yjdList: '',
+            userList: '',
         };
     },
     computed: {
@@ -299,10 +328,45 @@ export default {
                 }
             })
         },
+        // 发布价格实时指导
+        getTaskAvgPrice() {
+            this.isGetTaskAvgPrice = true;
+            this.$fly.get('/api/CompanyOption/GetTaskAvgPrice')
+            .then((res) => {
+                let { returnCode, returnMsg, data } = res;
+                if (returnCode == 100) {
+                    this.taskAvgPrice = data.speedPrice;
+                } else {
+                    this.$toast(returnMsg);
+                }
+            }).finally(() => {
+                this.isGetTaskAvgPrice = false;
+            })
+        },
+        // 实时订单排队情况
+        getTaskPendingCount() {
+            this.isGetTaskPendingCount = true;
+            this.$fly.get('/api/CompanyOption/GetTaskPendingCount')
+            .then((res) => {
+                let { returnCode, returnMsg, data } = res;
+                if (returnCode == 100) {
+                    this.wjdTotal = data.wjdTotal;
+                    this.wjdList = data.wjdList;
+                    this.yjdList = data.yjdList;
+                    this.userList = data.userList;
+                } else {
+                    this.$toast(returnMsg);
+                }
+            }).finally(() => {
+                this.isGetTaskPendingCount = false;
+            })
+        }
     },
     mounted() {
         this.getRegionList();
         this.getUserInfo();
+        this.getTaskAvgPrice();
+        this.getTaskPendingCount();
     },
 }
 </script>
@@ -375,6 +439,40 @@ export default {
             }
             .name {
                 padding: 10px 0;
+            }
+            .content {
+                padding: 15px 10px;
+                .title {
+                    color: #f40;
+                    text-align: center;
+                    font-size: 16/11rem;
+                }
+                .price {
+                    text-align: center;
+                    padding: 10px 0;
+                    span {
+                        color: #f40;
+                        font-size: 14/11rem;
+                    }
+                }
+                .btn {
+                    width: 100%;
+                }
+                .data-wp {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 15px;
+                    .data {
+                        font-size: 18/11rem;
+                        color: #f40;
+                        font-weight: 800;
+                    }
+                }
+                .row {
+                    padding: 15px 0 0 0;
+                    color: #f50;
+                }
             }
         }
         .panel {

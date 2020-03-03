@@ -4,6 +4,14 @@
         <span class="icon-loop2 van-icon" style="font-size:14px;"></span>
     </home-top>
     <date-select @getDate="getDate"></date-select>
+    <div class="status-wp">
+        <div class="status-row">
+            <h3>任务状态</h3>
+            <van-dropdown-menu class="flex1">
+                <van-dropdown-item v-model="task_status" :options="statusOpt" @change="getTaskCenter" />
+            </van-dropdown-menu>
+        </div>
+    </div>
     <div class="container">
         <p class="tip">
             <span class="title">提示：</span>
@@ -35,6 +43,21 @@ import BillItem from '@/components/bill-item.vue';
 
 const PAGE_SIZE = 10;
 
+const statusOpt = [
+    { text: '全部', value: '-1' },
+    { text: '未接单', value: '0' },
+    { text: '正在扫码', value: '2' },
+    { text: '扫码失败', value: '3' },
+    { text: '未接单退款', value: '4' },
+    { text: '任务失败', value: '6' },
+    { text: '任务成功', value: '1' },
+    { text: '自动完成', value: '5' },
+    { text: '正在申诉', value: '8' },
+    { text: '商家胜诉', value: '9' },
+    { text: '地推胜诉', value: '10' },
+    { text: '申诉失败', value: '11' },
+]
+
 const mockData = [{
     task_id: 22222,
     tel: 15894586066,
@@ -64,6 +87,8 @@ export default {
             currentPage: 1,
             PAGE_SIZE,
             totalNum: null,
+            task_status: '-1',
+            statusOpt,
         };
     },
     computed: {
@@ -81,8 +106,9 @@ export default {
                 duration: 0,       // 持续展示 toast
                 forbidClick: true, // 禁用背景点击
             });
-            this.$fly.get('/api/CompanyOption/GetTaskCenterPage', {
+            this.$fly.get('/api/CompanyOption/GetTaskCenterPageV2', {
                 dateTime: this.formDate,
+                task_status: this.task_status,
                 pageIndex: this.currentPage,
                 pageSize: PAGE_SIZE,
                 // appid: localStorage.getItem('appid'),
@@ -120,6 +146,24 @@ export default {
 
 <style lang='less'>
 .bill-wp {
+    .status-wp {
+        background-color: #fff;
+        .status-row {
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14/11rem;
+            border-bottom: 1px solid #f5f5f5;
+            .flex1 {
+                flex: 1;
+                .van-dropdown-menu__title {
+                    width: 90%;
+                    text-align: center;
+                }
+            }
+        }
+    }
     .container {
         padding: 15px;
         .tip {

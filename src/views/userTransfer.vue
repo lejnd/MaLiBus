@@ -23,7 +23,7 @@
         </div>
         <p class="tip">
             <span class="title">提示：</span>
-            可以把当前账号的金额转移到其他账户(仅限码力商家版内部用户，非支付宝和银行账户)，转移后金额不能撤销，请在转移前确认对方账号是否正确，码力平台不承担资金损失!
+            可以把当前账号的金额转移到其他账户(仅限雷霆内部用户，非支付宝和银行账户)，转移后金额不能撤销，请在转移前确认对方账号是否正确，雷霆平台不承担资金损失!
         </p>
         <div class="btn-group">
             <van-button class="btn" type="info" @click="transferMoney" :loading="isLoading">确定提交</van-button>

@@ -44,7 +44,7 @@
                 <van-checkbox v-model="accessChecked">
                     已阅读并同意
                 </van-checkbox>
-                <span class="deco" @click="showAuthDialog=true">《码力任务平台注册协议》</span>
+                <span class="deco" @click="showAuthDialog=true">《雷霆平台注册协议》</span>
             </div>
             <div class="deco-btn">
                 <span @click="loginTypeSwich">{{loginTypeText}}<van-icon name="exchange"/></span>
@@ -96,7 +96,7 @@
     </van-tabs>
     <van-dialog
         v-model="showAuthDialog"
-        title="《码力任务平台注册协议》">
+        title="《雷霆平台注册协议》">
         <div class="auth-agreement" v-html="authAgreement"></div>
     </van-dialog>
 </div>
@@ -229,7 +229,7 @@ export default {
                 return false
             }
             if (!this.accessChecked) {
-                this.$notify('请同意《码力任务平台注册协议》')
+                this.$notify('请同意《雷霆平台注册协议》')
                 return false
             }
             let data = {

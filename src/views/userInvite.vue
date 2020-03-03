@@ -10,7 +10,7 @@
                 <p class="big">{{invitation_code}}</p>
                 <p class="link" @click="copyText" :data-clipboard-text="link">{{link}}</p>
                 <p>点击链接复制</p>
-                <p class="deco">快快邀请好友来码力赚钱吧！</p>
+                <p class="deco">快快邀请好友来雷霆赚钱吧！</p>
                 <div class="line"></div>
                 <dir class="qrcode" ref="qrcode"></dir>
                 <p class="deco">把二维码分享给好友吧</p>
